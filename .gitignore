@@ -1,0 +1,7 @@
+# .gitignore file
+
+# Compiled Python code
+*.pyc
+
+# vim swap files
+*.swp
