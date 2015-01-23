@@ -1,28 +1,43 @@
+
 class Node:
   color = 'Red'
-  value = 0
+  value = None
   parent = None
   grandparent = None
   uncle = None
   brother = None
 
-  def __init__(self, value, parent = None, grandparent = None, uncle = None, brother = None):
+  def __init__(self, value):
     self.value = value
-    self.sN = [None,None]
+
+  def initChildren(self):
+    self.child0 = Node(None)
+    self.child1 = Node(None)
+  
+  @staticmethod
+  def initTree(value):
+    node = Node(None)
+    node.value = value
+    node.initChildren()
+    return node
+
+  def assignFamily(self,parent,grandparent,uncle,brother):
     self.parent = parent
     self.grandparent = grandparent
     self.uncle = uncle
     self.brother = brother
 
   def __str__(self):
+    if self.value == None:
+      return 'nilNode'
     return str(self.value) + self.color[0]
 
   def tree(self,level = 0):
     print '\t'*level, self
-    if self.sN[0] != None:
-      self.sN[0].tree(level+1)
-    if self.sN[1] != None:
-      self.sN[1].tree(level+1)
+    if self.child0.value != None:
+      self.child0.tree(level+1)
+    if self.child1.value != None:
+      self.child1.tree(level+1)
 
   def family(self):
     print 'grandparent\t' + str(self.grandparent)
@@ -31,29 +46,29 @@ class Node:
     print 'brother\t\t' + str(self.brother)
 
   def insert(self,value):
-    if self.sN[0] == None:
-      self.sN[0] = Node(value,self,self.parent,self.brother,self.sN[1])
-      #if self.color == 'Red':
-        #self.sN[0].color = 'Black'
-    elif self.sN[1] == None:
-      self.sN[1] = Node(value,self,self.parent,self.brother,self.sN[0]) 
-      #if self.color == 'Red':
-        #self.sN[1].color = 'Black'
-    elif abs(self.sN[0].value-value) < abs(self.sN[1].value-value):
-      self.sN[0].insert(value)
+    if self.child0.value == None:
+      self.child0.initChildren()
+      self.child0.assignFamily(self,self.parent,self.brother,self.child1)
+      self.child0.value = value
+    elif self.child1.value == None:
+      self.child1.initChildren()
+      self.child1.assignFamily(self,self.parent,self.brother,self.child0)
+      self.child1.value = value
+    elif abs(self.child0.value-value) < abs(self.child1.value-value):
+      self.child0.insert(value)
     else:
-      self.sN[1].insert(value)
+      self.child1.insert(value)
     self.blr()
     #self.balance()
 
   # Balances the left and right side of a node (smaller value on right)
   def blr(self):
-    if self.sN[0] == None:
-      self.sN[0] = self.sN[1]
-    if self.sN[0] == None or self.sN[1] == None:
+    if self.child0.value == None:
+      self.child0 = self.child1
+    if self.child0.value == None or self.child1.value == None:
       return
-    if self.sN[0].value > self.sN[1].value:
-      self.sN[0], self.sN[1] = self.sN[1], self.sN[0] 
+    if self.child0.value > self.child1.value:
+      self.child0, self.child1 = self.sN[1], self.sN[0] 
 
   def weight(self):
     count = 0
@@ -61,25 +76,25 @@ class Node:
       count += 1
     else:
       count += 0
-    if self.sN == [None,None]:
+    if self.child0.value == None and self.child1.value == None:
       return count
-    if self.sN[1] == None:
-      count += self.sN[0].weight()
+    if self.child1.value == None:
+      count += self.child0.weight()
     else:
-      count += self.sN[0].weight() + self.sN[1].weight()
+      count += self.child0.weight() + self.child1.weight()
     return count
  
   # Returns -1 if balanced; 0/1 if that node is heavier (more black subnodes) 
   def unbalanced(self):
-    if self.sN == [None,None]:
+    if self.child0.value == None and self.child1.value == None:
       return -1
-    weight0 = self.sN[0].weight()
-    if self.sN[1] == None:
+    weight0 = self.child0.weight()
+    if self.child1.value == None:
       if weight0 != 0:
         return 0
       else:
         return -1
-    weight1 = self.sN[1].weight()
+    weight1 = self.child1.weight()
     if weight0 > weight1:
       return 0
     elif weight0 < weight1:

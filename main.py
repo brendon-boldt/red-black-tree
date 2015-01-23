@@ -1,8 +1,8 @@
 import node
 
-x = node.Node(0)
+x = node.Node.initTree(0)
 x.insert(1)
 x.insert(2)
 x.tree()
-x.sN[0].family()
-x.sN[1].family()
+x.child0.family()
+x.child1.family()
