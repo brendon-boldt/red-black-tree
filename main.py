@@ -1,8 +1,8 @@
 import node
 
 x = node.Node(0)
-x.insert(3)
 x.insert(1)
-x.insert(5)
+x.insert(2)
 x.tree()
-print x.unbalanced()
+x.sN[0].family()
+x.sN[1].family()
