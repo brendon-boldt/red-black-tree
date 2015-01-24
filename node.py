@@ -1,4 +1,3 @@
-
 class Node:
   color = 'Red'
   value = None
@@ -19,6 +18,7 @@ class Node:
     node = Node(None)
     node.value = value
     node.initChildren()
+    case1(node)
     return node
 
   def assignFamily(self,parent,grandparent,uncle,brother):
@@ -50,10 +50,12 @@ class Node:
       self.child0.initChildren()
       self.child0.assignFamily(self,self.parent,self.brother,self.child1)
       self.child0.value = value
+      case1(self.child0)
     elif self.child1.value == None:
       self.child1.initChildren()
       self.child1.assignFamily(self,self.parent,self.brother,self.child0)
       self.child1.value = value
+      case1(self.child1)
     elif abs(self.child0.value-value) < abs(self.child1.value-value):
       self.child0.insert(value)
     else:
@@ -102,6 +104,37 @@ class Node:
     else:
       return -1
 
-
 def case1(node):
+  print node
+  print 'case1'
+  if node.parent == None:
+    node.color = 'Black'
+  else: 
+    case2(node)
+
+def case2(node):
+  print 'case2'
+  if node.parent.color == 'Black':
+    return
+  else:
+    case3(node)
+
+def case3(node):
+  print 'case3'
+  if node.parent.color == 'Red' and node.uncle.color == 'Red':
+    node.parent.color = 'Black'
+    node.uncle.color = 'Black'
+    node.grandparent.color = 'Red'
+    case1(node.grandparent)
+  else:
+    case4(node)
+
+def case4(node):
+  print 'case4'
   print None
+
+def case5(node):
+  print 'case5'
+  print None
+
+
