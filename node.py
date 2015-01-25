@@ -38,6 +38,8 @@ class Node:
     return self.parent.parent
 
   def uncle(self):
+    if(self.grandparent() == None):
+      return None
     if(self.parent.side == 'Left'):
       return self.grandparent().right
     else:
@@ -121,7 +123,20 @@ class Node:
       return -1
     
   def rotateLeft(self):
-    print None
+    oldParent = self.parent
+    self.parent = self.grandparent()
+    oldParent.parent = self
+    self.parent.left = self
+    self.left, oldParent.right = oldParent, self.left
+    self.side = 'Left'
+
+  def rotateRight(self):
+    oldParent = self.parent
+    self.parent = self.grandparent()
+    oldParent.parent = self
+    self.parent.right = self
+    self.right, oldParent.left = oldParent, self.right
+    self.side = 'Right'
 
 def case1(node):
   print node
