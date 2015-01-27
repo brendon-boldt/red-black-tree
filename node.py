@@ -1,6 +1,3 @@
-# Add a Tree class :D
-# Is auto child->parent update possible? (e.g., self.parent.left = self)
-
 class Node:
   color = 'Red'
   value = None
@@ -14,7 +11,13 @@ class Node:
 
   def initChildren(self):
     self.left = Node(None)
+    self.left.side = 'Left'
+    self.left.parent = self
+    self.left.color = 'Black'
     self.right = Node(None)
+    self.right.side = 'Right'
+    self.right.parent = self
+    self.right.color = 'Black'
   
   @staticmethod
   def initTree(value):
@@ -64,28 +67,19 @@ class Node:
     print 'brother\t\t' + str(self.brother())
 
   def insert(self,value):
-    if self.left.value == None:
-      self.left.initChildren()
-      self.left.parent = self
-      self.left.value = value
-      self.left.side = 'Left'
-      Node.nodes.append(self.left)
-      case1(self.left)
-    elif self.right.value == None:
-      self.right.initChildren()
-      self.right.parent = self
-      self.right.value = value
-      self.right.side = 'Right'
-      Node.nodes.append(self.right)
-      case1(self.right)
-    elif abs(self.left.value-value) < abs(self.right.value-value):
+    if self.value == None:
+      self.value = value
+      self.color = 'Red'
+      self.initChildren()
+      Node.nodes.append(self)
+      case1(self)
+    elif value < self.value:
       self.left.insert(value)
     else:
       self.right.insert(value)
-    self.blr()
-    #self.balance()
 
   # Balances the left and right side of a node (smaller value on right)
+  # This is probably uneccessary
   def blr(self):
     if self.left.value == None:
       self.left = self.right
@@ -96,6 +90,7 @@ class Node:
     self.left.side = 'Left'
     self.right.side = 'Right'
 
+  # This method does not work; will be updated if necessary
   def weight(self):
     count = 0
     if self.color == 'Black':
@@ -130,24 +125,29 @@ class Node:
     
   def rotateLeft(self):
     oldParent = self.parent
+    self.side = self.parent.side
+    self.parent.side = 'Left'
     self.parent = self.grandparent()
     oldParent.parent = self
     if self.parent != None:
-      self.parent.left = self
+      if self.side == 'Left':
+        self.parent.left = self
+      else:
+        self.parent.right = self
     self.left, oldParent.right = oldParent, self.left
-    self.side = 'Left'
 
   def rotateRight(self):
-    print self
-    self.family()
     oldParent = self.parent
+    self.side = oldParent.side
+    oldParent.side = 'Right'
     self.parent = self.grandparent()
     oldParent.parent = self
     if self.parent != None:
-      self.parent.right = self
-    print oldParent.left, "=", self.right
+      if self.side == 'Left':
+        self.parent.left = self
+      else:
+        self.parent.right = self
     self.right, oldParent.left = oldParent, self.right
-    self.side = 'Right'
 
 def case1(node):
   #print node
@@ -165,7 +165,6 @@ def case2(node):
     case3(node)
 
 def case3(node):
-  #print 'case3'
   if node.parent.color == 'Red' and node.uncle().color == 'Red':
     node.parent.color = 'Black'
     node.uncle().color = 'Black'
@@ -173,6 +172,12 @@ def case3(node):
     case1(node.grandparent())
   else:
     case4(node)
+
+def case4(node):
+    if self.parent != None:
+      self.parent.right = self
+    self.right, oldParent.left = oldParent, self.right
+    self.side = 'Right'
 
 def case4(node):
   #print 'case4'
