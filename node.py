@@ -1,3 +1,6 @@
+# Add a Tree class :D
+# Is auto child->parent update possible? (e.g., self.parent.left = self)
+
 class Node:
   color = 'Red'
   value = None
@@ -19,6 +22,7 @@ class Node:
     node.value = value
     node.initChildren()
     case1(node)
+    Node.nodes = [node]
     return node
 
   def __str__(self):
@@ -65,12 +69,14 @@ class Node:
       self.left.parent = self
       self.left.value = value
       self.left.side = 'Left'
+      Node.nodes.append(self.left)
       case1(self.left)
     elif self.right.value == None:
       self.right.initChildren()
       self.right.parent = self
       self.right.value = value
       self.right.side = 'Right'
+      Node.nodes.append(self.right)
       case1(self.right)
     elif abs(self.left.value-value) < abs(self.right.value-value):
       self.left.insert(value)
@@ -126,35 +132,40 @@ class Node:
     oldParent = self.parent
     self.parent = self.grandparent()
     oldParent.parent = self
-    self.parent.left = self
+    if self.parent != None:
+      self.parent.left = self
     self.left, oldParent.right = oldParent, self.left
     self.side = 'Left'
 
   def rotateRight(self):
+    print self
+    self.family()
     oldParent = self.parent
     self.parent = self.grandparent()
     oldParent.parent = self
-    self.parent.right = self
+    if self.parent != None:
+      self.parent.right = self
+    print oldParent.left, "=", self.right
     self.right, oldParent.left = oldParent, self.right
     self.side = 'Right'
 
 def case1(node):
-  print node
-  print 'case1'
+  #print node
+  #print 'case1'
   if node.parent == None:
     node.color = 'Black'
   else: 
     case2(node)
 
 def case2(node):
-  print 'case2'
+  #print 'case2'
   if node.parent.color == 'Black':
     return
   else:
     case3(node)
 
 def case3(node):
-  print 'case3'
+  #print 'case3'
   if node.parent.color == 'Red' and node.uncle().color == 'Red':
     node.parent.color = 'Black'
     node.uncle().color = 'Black'
@@ -164,13 +175,27 @@ def case3(node):
     case4(node)
 
 def case4(node):
-  print 'case4'
+  #print 'case4'
+  #node.grandparent().tree()
   if node.side != node.parent.side:
-    print 'true'
-    
+    if node.side == 'Right':
+      node.rotateLeft()
+    else:
+      node.rotateRight()
+  case5(node)
 
 def case5(node):
-  print 'case5'
-  print None
-
+  #print 'case5'
+  #node.grandparent().tree()
+  #print node
+  #node.family()
+  if node.side == node.parent.side:
+    if node.side == 'Left':
+      node.parent.color = 'Black'
+      node.grandparent().color = 'Red'
+      node.parent.rotateRight()
+    else:
+      node.parent.color = 'Black'
+      node.grandparent().color = 'Red'
+      node.parent.rotateLeft()
 
