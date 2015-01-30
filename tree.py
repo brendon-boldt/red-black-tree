@@ -17,3 +17,6 @@ class Tree:
 
   def unbalanced(self):
     return self.root.unbalanced()
+
+  def search(self, value):
+    return self.root.search(value)

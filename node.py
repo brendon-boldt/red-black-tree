@@ -78,17 +78,13 @@ class Node:
     else:
       self.right.insert(value)
 
-  # Balances the left and right side of a node (smaller value on right)
-  # This is probably uneccessary
-  def blr(self):
-    if self.left.value == None:
-      self.left = self.right
-    if self.left.value == None or self.right.value == None:
-      return
-    if self.left.value > self.right.value:
-      self.left, self.right = self.right, self.left
-    self.left.side = 'Left'
-    self.right.side = 'Right'
+  def search(self,value):
+    if self.value == value:
+      return self
+    elif value < self.value:
+      return self.left.search(value)
+    else:
+      return self.right.search(value)
 
   # This method does not work; will be updated if necessary
   def weight(self):
