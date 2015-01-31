@@ -18,13 +18,20 @@ class Node:
     self.right.side = 'Right'
     self.right.parent = self
     self.right.color = 'Black'
+
+  # This method assures that a parent's children belong to it
+  def updateChildren(self):
+    self.left.parent = self
+    self.left.side = 'Left'
+    self.right.parent = self
+    self.right.side = 'Right'
   
   @staticmethod
   def initTree(value):
     node = Node(None)
     node.value = value
     node.initChildren()
-    case1(node)
+    insertCase1(node)
     Node.nodes = [node]
     return node
 
@@ -72,21 +79,30 @@ class Node:
       self.color = 'Red'
       self.initChildren()
       Node.nodes.append(self)
-      case1(self)
+      insertCase1(self)
     elif value < self.value:
       self.left.insert(value)
     else:
       self.right.insert(value)
 
   def search(self,value):
-    if self.value == value:
+    if self.value == value or self.value == None:
       return self
     elif value < self.value:
       return self.left.search(value)
     else:
       return self.right.search(value)
 
-  # This method does not work; will be updated if necessary
+  def delete(self,value):
+    if self.value == None:
+      return None
+    elif value < self.value:
+      self.left.delete(value)
+    elif value > self.value:
+      self.right.delete(value)
+    else:
+      print "Null"
+
   def weight(self):
     count = 0
     if self.color == 'Black':
@@ -131,6 +147,7 @@ class Node:
       else:
         self.parent.right = self
     self.left, oldParent.right = oldParent, self.left
+    oldParent.updateChildren()
 
   def rotateRight(self):
     oldParent = self.parent
@@ -144,52 +161,44 @@ class Node:
       else:
         self.parent.right = self
     self.right, oldParent.left = oldParent, self.right
+    oldParent.updateChildren()
 
-def case1(node):
-  #print node
-  #print 'case1'
+def insertCase1(node):
   if node.parent == None:
     node.color = 'Black'
   else: 
-    case2(node)
+    insertCase2(node)
 
-def case2(node):
-  #print 'case2'
+def insertCase2(node):
   if node.parent.color == 'Black':
     return
   else:
-    case3(node)
+    insertCase3(node)
 
-def case3(node):
+def insertCase3(node):
   if node.parent.color == 'Red' and node.uncle().color == 'Red':
     node.parent.color = 'Black'
     node.uncle().color = 'Black'
     node.grandparent().color = 'Red'
-    case1(node.grandparent())
+    insertCase1(node.grandparent())
   else:
-    case4(node)
+    insertCase4(node)
 
-def case4(node):
+def insertCase4(node):
     if self.parent != None:
       self.parent.right = self
     self.right, oldParent.left = oldParent, self.right
     self.side = 'Right'
 
-def case4(node):
-  #print 'case4'
-  #node.grandparent().tree()
+def insertCase4(node):
   if node.side != node.parent.side:
     if node.side == 'Right':
       node.rotateLeft()
     else:
       node.rotateRight()
-  case5(node)
+  insertCase5(node)
 
-def case5(node):
-  #print 'case5'
-  #node.grandparent().tree()
-  #print node
-  #node.family()
+def insertCase5(node):
   if node.side == node.parent.side:
     if node.side == 'Left':
       node.parent.color = 'Black'
@@ -199,4 +208,20 @@ def case5(node):
       node.parent.color = 'Black'
       node.grandparent().color = 'Red'
       node.parent.rotateLeft()
+
+def deleteCase1(node):
+  
+  deleteCase2(node)
+
+def deleteCase2(node):
+  deleteCase3(node)
+
+def deleteCase3(node):
+  deleteCase4(node)
+
+def deleteCase4(node):
+  deleteCase5(node)
+
+def deleteCase5(node):
+  print "Null"
 

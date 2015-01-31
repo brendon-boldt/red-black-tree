@@ -12,11 +12,15 @@ class Tree:
     if self.root.parent != None:
       self.root = self.root.parent
 
+  def search(self, value):
+    return self.root.search(value)
+
+  def delete(self, value):
+    self.root.delete(value)
+
   def tree(self):
     self.root.tree()
 
   def unbalanced(self):
     return self.root.unbalanced()
 
-  def search(self, value):
-    return self.root.search(value)
