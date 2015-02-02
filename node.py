@@ -95,13 +95,58 @@ class Node:
 
   def delete(self,value):
     if self.value == None:
-      return None
+      return 'val'
     elif value < self.value:
-      self.left.delete(value)
+      return self.left.delete(value)
     elif value > self.value:
-      self.right.delete(value)
+      return self.right.delete(value)
     else:
-      print "Null"
+      if (self.left.value == None) != (self.right.value == None):
+        self.singleChildDelete()
+      if (self.left.value == None) and (self.right.value == None):
+        self.leafDelete()
+      return self
+
+  def leafDelete(self):
+    if self.color == 'Red':
+      if self.side == 'Right':
+        self.parent.right = Node(None)
+      else:
+        self.parent.left = Node(None)
+    del self.left
+    del self.right
+
+  def singleChildDelete(self):
+    if self.color == 'Black':
+      if self.right.color == 'Red':
+        self.right.color = 'Black'
+        self.right.parent = self.parent
+        if self.side == 'Right':
+          self.parent.right = self.right
+        else:
+          self.parent.left = self.right
+        return self
+      if self.left.color == 'Red':
+        self.left.color = 'Black'
+        self.left.parent = self.parent
+        if self.side == 'Right':
+          self.parent.right = self.left
+        else:
+          self.parent.left = self.left
+        return self
+    elif self.color == 'Red':
+      if self.left.value != None:
+        self.left.parent = self.parent
+        if self.side == 'Right':
+          self.parent.right = self.left
+        else:
+          self.parent.left = self.left
+      else:
+        self.right.parent = self.parent
+        if self.side == 'Right':
+          self.parent.right = self.right
+        else:
+          self.parent.left = self.right
 
   def weight(self):
     count = 0

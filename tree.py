@@ -16,7 +16,10 @@ class Tree:
     return self.root.search(value)
 
   def delete(self, value):
-    self.root.delete(value)
+    node = self.root.delete(value)
+    print "Deleted Node:", node
+    if node != None:
+      del node
 
   def tree(self):
     self.root.tree()

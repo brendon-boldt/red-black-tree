@@ -23,12 +23,17 @@ x.insert(3)
 x.insert(4)
 x.insert(5)
 x.insert(6)
-x.insert(7)
+#x.insert(7)
+x.insert(-1)
 x.tree()
+x.delete(4)
+x.delete(6)
+x.delete(-1)
 searchCompare()
+x.tree()
+quit()
 
-
-for i in range(0,8):
+for i in range(0,100):
   x.insert(random.randint(0,100))
 x.tree()
 x.insert(random.randint(0,100))
