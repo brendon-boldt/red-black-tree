@@ -14,6 +14,10 @@ def parentCompare():
     elif i.side == 'Left':
       print i , '->' , i.parent.left
 
+def childCompare():
+  for i in tree.node.Node.nodes:
+    print i,'->',i.left, i.right
+
 random.seed(1)
 
 x = tree.Tree(0)
@@ -23,13 +27,10 @@ x.insert(3)
 x.insert(4)
 x.insert(5)
 x.insert(6)
-#x.insert(7)
-x.insert(-1)
+x.insert(7)
 x.tree()
-x.delete(4)
-x.delete(6)
-x.delete(-1)
-searchCompare()
+x.delete(3)
+#childCompare()
 x.tree()
 quit()
 

@@ -59,7 +59,7 @@ class Node:
     else:
       return self.grandparent().left
 
-  def brother(self):
+  def sibling(self):
     if(self.side == 'Left'):
       return self.parent.right
     else:
@@ -71,7 +71,7 @@ class Node:
     print 'grandparent\t' + str(self.grandparent())
     print 'parent\t\t' + str(self.parent)
     print 'uncle\t\t' + str(self.uncle())
-    print 'brother\t\t' + str(self.brother())
+    print 'sibling\t\t' + str(self.brother())
 
   def insert(self,value):
     if self.value == None:
@@ -95,17 +95,32 @@ class Node:
 
   def delete(self,value):
     if self.value == None:
-      return 'val'
+      return self
     elif value < self.value:
       return self.left.delete(value)
     elif value > self.value:
       return self.right.delete(value)
     else:
       if (self.left.value == None) != (self.right.value == None):
-        self.singleChildDelete()
-      if (self.left.value == None) and (self.right.value == None):
-        self.leafDelete()
+        return self.singleChildDelete()
+      elif (self.left.value == None) and (self.right.value == None):
+        return self.leafDelete()
+      else:
+        return self.left.findReplacement(self)
       return self
+
+  # Finds node to replace node to be deleted from the rightmost of left subtree
+  def findReplacement(self,node):
+    if self.right.value == None:
+      print self, '->', node
+      node.value = self.value
+      if self.left.value == None:
+        return self.leafDelete()
+      else:
+        return self.singleChildDelete()
+    else:
+      return self.right.findReplacement(node)
+    
 
   def leafDelete(self):
     if self.color == 'Red':
@@ -115,6 +130,7 @@ class Node:
         self.parent.left = Node(None)
     del self.left
     del self.right
+    return self
 
   def singleChildDelete(self):
     if self.color == 'Black':
@@ -134,19 +150,8 @@ class Node:
         else:
           self.parent.left = self.left
         return self
-    elif self.color == 'Red':
-      if self.left.value != None:
-        self.left.parent = self.parent
-        if self.side == 'Right':
-          self.parent.right = self.left
-        else:
-          self.parent.left = self.left
-      else:
-        self.right.parent = self.parent
-        if self.side == 'Right':
-          self.parent.right = self.right
-        else:
-          self.parent.left = self.right
+    else:
+      raise Exception("Invalid colouring")
 
   def weight(self):
     count = 0
