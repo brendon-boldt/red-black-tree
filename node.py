@@ -104,10 +104,11 @@ class Node:
       if (self.left.value == None) != (self.right.value == None):
         return self.singleChildDelete()
       elif (self.left.value == None) and (self.right.value == None):
-        return self.leafDelete()
+        node = self.leafDelete()
       else:
-        return self.left.findReplacement(self)
-      return self
+        node = self.left.findReplacement(self)
+      deleteCase1(self);
+      return node
 
   # Finds node to replace node to be deleted from the rightmost of left subtree
   def findReplacement(self,node):
@@ -121,13 +122,11 @@ class Node:
     else:
       return self.right.findReplacement(node)
     
-
   def leafDelete(self):
-    if self.color == 'Red':
-      if self.side == 'Right':
-        self.parent.right = Node(None)
-      else:
-        self.parent.left = Node(None)
+    if self.side == 'Right':
+      self.parent.right = Node(None)
+    else:
+      self.parent.left = Node(None)
     del self.left
     del self.right
     return self
@@ -260,18 +259,37 @@ def insertCase5(node):
       node.parent.rotateLeft()
 
 def deleteCase1(node):
-  
-  deleteCase2(node)
+  if node.parent != None: 
+    deleteCase2(node)
 
 def deleteCase2(node):
-  deleteCase3(node)
+  if node.sibling().color == 'Red':
+    print 'Case2'
+    node.sibling().color = 'Black'
+    node.parent.color = 'Red'
+    if node.side == 'Left':
+      node.sibling().rotateLeft()
+    else:
+      node.sibling().rotateRight()
+  deleteCase3(node.parent)
 
 def deleteCase3(node):
+  if node.color == 'Black' and node.parent.color == 'Black' and node.sibling().color == 'Black':
+    print 'Case3'
+    node.sibling().color = 'Red'
+    deleteCase1(node.parent)
   deleteCase4(node)
 
 def deleteCase4(node):
+  print 'Case4',node.parent,node.sibling()
+  if node.parent.color == 'Red' and node.sibling().color == 'Black':
+    print 'Case4'
+    node.parent.color = 'Black'
+    node.sibling().color = 'Red'
   deleteCase5(node)
 
 def deleteCase5(node):
-  print "Null"
+  deleteCase6(node)
 
+def deleteCase6(node):
+  return
