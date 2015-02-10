@@ -264,14 +264,16 @@ def deleteCase1(node):
 
 def deleteCase2(node):
   if node.sibling().color == 'Red':
-    print 'Case2'
+    print 'Case2',node
     node.sibling().color = 'Black'
     node.parent.color = 'Red'
     if node.side == 'Left':
       node.sibling().rotateLeft()
     else:
       node.sibling().rotateRight()
-  deleteCase3(node.parent)
+  # Not sure why the argument was node.parent
+  #deleteCase3(node.parent)
+  deleteCase3(node)
 
 def deleteCase3(node):
   if node.color == 'Black' and node.parent.color == 'Black' and node.sibling().color == 'Black':
@@ -281,9 +283,8 @@ def deleteCase3(node):
   deleteCase4(node)
 
 def deleteCase4(node):
-  print 'Case4',node.parent,node.sibling()
-  if node.parent.color == 'Red' and node.sibling().color == 'Black':
-    print 'Case4'
+  print 'Case4', node.parent
+  if node.sibling().left.color == 'Black' and node.sibling().right.color == 'Black' and node.parent.color == 'Red':
     node.parent.color = 'Black'
     node.sibling().color = 'Red'
   deleteCase5(node)
