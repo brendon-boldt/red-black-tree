@@ -17,7 +17,8 @@ class Tree:
 
   def delete(self, value):
     node = self.root.delete(value)
-    self.root = self.root.parent
+    if self.root.parent != None:
+      self.root = self.root.parent
     print "Deleted Node:", node
     if node != None:
       del node

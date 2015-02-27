@@ -270,8 +270,10 @@ def deleteCase1(node):
     deleteCase2(node)
 
 def deleteCase2(node):
-  if node.sibling().color == 'Red':
-    print 'Case2',node
+  # Original if caused unnecessary rotation
+  #if node.sibling().color == 'Red':
+  if node.color == 'Black' and node.sibling().color == 'Red':
+    #print 'Case2',node
     node.sibling().color = 'Black'
     node.parent.color = 'Red'
     if node.side == 'Left':
@@ -284,52 +286,51 @@ def deleteCase2(node):
 
 def deleteCase3(node):
   # To my knowledge, I never need check node.color
-  print 'kayss3', node.sibling()
+  #print 'kayss3', node.sibling()
   if node.parent.color == 'Black' and node.sibling().color == 'Black' and node.sibling().left.color == 'Black' and node.sibling().right.color == 'Black':
-    print 'Case3'
+    #print 'Case3'
     node.sibling().color = 'Red'
     deleteCase1(node.parent)
   deleteCase4(node)
 
 def deleteCase4(node):
-  print 'Case4', node.parent
-  node.parent.tree()
-  if node.sibling().left.color == 'Black' and node.sibling().right.color == 'Black' and node.parent.color == 'Red':
-    node.parent.color = 'Black'
-    node.sibling().color = 'Red'
+  #print 'Case4', node.parent
+  # This if keeps it from crashing; not sure if it should be there
+  if node.sibling().value != None:
+    if node.sibling().left.color == 'Black' and node.sibling().right.color == 'Black' and node.parent.color == 'Red':
+      node.parent.color = 'Black'
+      node.sibling().color = 'Red'
   deleteCase5(node)
-# All delete cases ad hoc are impletemented correctly (?)
 
 def deleteCase5(node):
-  print 'Case5', node.sibling()
+  #print 'Case5', node.sibling()
   if node.sibling().color == 'Black':
     if node.sibling().side == 'Right' and node.sibling().left.color == 'Red' and node.sibling().right.color == 'Black':
-      print 'Right'
+      #print 'Right'
       node.sibling().color = 'Red'
       node.sibling().left.color = 'Black'
       node.sibling().left.rotateRight()
     if node.sibling().side == 'Left' and node.sibling().left.color == 'Black' and node.sibling().right.color == 'Red':
-      print 'Left'
+      #print 'Left'
       node.sibling().color = 'Red'
       node.sibling().right.color = 'Black'
       node.sibling().right.rotateLeft()
-
   deleteCase6(node)
 
 def deleteCase6(node):
-  print 'Case6'
+  #print 'Case6'
   # Must I check if the removed node is black?
-  if node.side == 'Left' and node.sibling().right.color == 'Red':
-    print 'Right'
-    node.sibling().right.color = 'Black'
-    node.sibling().color = node.parent.color
-    node.parent.color = 'Black'
-    print 'Rotating', node.sibling()
-    node.sibling().rotateLeft()
-  if node.side == 'Right' and node.sibling().left.color == 'Red':
-    print 'Left'
-    node.sibling().left.color = 'Black'
-    node.sibling().color = node.parent.color
-    node.parent.color = 'Black'
-    node.sibling().rotateRight()
+  if node.sibling().value != None:
+    if node.side == 'Left' and node.sibling().right.color == 'Red':
+      #print 'Right'
+      node.sibling().right.color = 'Black'
+      node.sibling().color = node.parent.color
+      node.parent.color = 'Black'
+      node.sibling().rotateLeft()
+    if node.side == 'Right' and node.sibling().left.color == 'Red':
+      #print 'Left'
+      node.sibling().left.color = 'Black'
+      node.sibling().color = node.parent.color
+      node.parent.color = 'Black'
+      node.sibling().rotateRight()
   return
