@@ -32,11 +32,15 @@ x.insert(8)
 x.insert(9)
 x.insert(10)
 x.tree()
-x.delete(4)
+print x.root.left.length(), x.root.right.length()
+quit()
 x.tree()
+x.delete(4)
 x.delete(7)
 #childCompare()
 x.tree()
+print x.root.unbalanced()
+
 quit()
 
 for i in range(0,100):

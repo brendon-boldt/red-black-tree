@@ -1,6 +1,6 @@
 # All calls to Node should be made only from Tree
 class Node:
-  color = 'Red'
+  color = 'X'
   value = None
   left = None
   right = None
@@ -36,16 +36,21 @@ class Node:
     Node.nodes = [node]
     return node
 
+  def isLeaf(self):
+    return self.value == None
+
   def __str__(self):
-    if self.value == None:
-      return 'nilNode'
+    if self.isLeaf():
+      return '-' + self.color[0]
     return str(self.value) + self.color[0]
 
   def tree(self,level = 0):
     print '\t'*level, self
-    if self.left.value != None:
+    #if self.left.value != None:
+    if self.left != None:
       self.left.tree(level+1)
-    if self.right.value != None:
+    #if self.right.value != None:
+    if self.right != None:
       self.right.tree(level+1)
 
   # Accessing family members means that only the parent needs to be updated
@@ -75,10 +80,11 @@ class Node:
     print 'sibling\t\t' + str(self.brother())
 
   def insert(self,value):
-    if self.value == None:
+    if self.isLeaf():
       self.value = value
       self.color = 'Red'
       self.initChildren()
+      # The below liine is for debugging
       Node.nodes.append(self)
       insertCase1(self)
     elif value < self.value:
@@ -87,7 +93,7 @@ class Node:
       self.right.insert(value)
 
   def search(self,value):
-    if self.value == value or self.value == None:
+    if self.value == value or self.isLeaf():
       return self
     elif value < self.value:
       return self.left.search(value)
@@ -95,16 +101,16 @@ class Node:
       return self.right.search(value)
 
   def delete(self,value):
-    if self.value == None:
+    if self.isLeaf():
       return self
     elif value < self.value:
       return self.left.delete(value)
     elif value > self.value:
       return self.right.delete(value)
     else:
-      if (self.left.value == None) != (self.right.value == None):
+      if (self.left.isLeaf()) != (self.right.isLeaf()):
         return self.singleChildDelete()
-      elif (self.left.value == None) and (self.right.value == None):
+      elif (self.left.isLeaf()) and (self.right.isLeaf()):
         node = self.leafDelete()
       else:
         node = self.left.findReplacement(self)
@@ -114,10 +120,10 @@ class Node:
 
   # Finds node to replace node to be deleted from the rightmost of left subtree
   def findReplacement(self,node):
-    if self.right.value == None:
+    if self.right.isLeaf():
       print self, '->', node
       node.value = self.value
-      if self.left.value == None:
+      if self.left.isLeaf():
         return self.leafDelete()
       else:
         return self.singleChildDelete()
@@ -125,10 +131,12 @@ class Node:
       return self.right.findReplacement(node)
     
   def leafDelete(self):
+    node = Node(None)
+    node.color = 'Black'
     if self.side == 'Right':
-      self.parent.right = Node(None)
+      self.parent.right = node
     else:
-      self.parent.left = Node(None)
+      self.parent.left = node
     del self.left
     del self.right
     return self
@@ -154,37 +162,23 @@ class Node:
     else:
       raise Exception("Invalid colouring")
 
-  def weight(self):
+  def length(self):
     count = 0
-    if self.color == 'Black':
-      count += 1
-    else:
-      count += 0
-    if self.left.value == None and self.right.value == None:
-      return count
-    if self.right.value == None:
-      count += self.left.weight()
-    else:
-      count += self.left.weight() + self.right.weight()
+    if not self.isLeaf():
+      if self.color == 'Black':
+        count += 1
+      leftLength  = self.left.length()
+      rightLength = self.right.length()
+      if leftLength != rightLength:
+        raise Exception("Invalid balance")
+      else:
+        count += leftLength
     return count
  
-  # Returns -1 if balanced; 0/1 if that node is heavier (more black subnodes) 
   def unbalanced(self):
-    if self.left.value == None and self.right.value == None:
-      return -1
-    weight0 = self.left.weight()
-    if self.right.value == None:
-      if weight0 != 0:
-        return 0
-      else:
-        return -1
-    weight1 = self.right.weight()
-    if weight0 > weight1:
-      return 0
-    elif weight0 < weight1:
-      return 1
-    else:
-      return -1
+    if self.left.isLeaf() and self.right.isLeaf():
+      return False
+    #if self.right.isLeaf() and self.left.color == 'Black' or self.left.isLeaf() and self.right.color == 'Black':
     
   # Nota bene: the rotation call is made on the child of the pivot point
   # rather than the pivot point itself
@@ -286,25 +280,26 @@ def deleteCase2(node):
 
 def deleteCase3(node):
   # To my knowledge, I never need check node.color
-  #print 'kayss3', node.sibling()
-  if node.parent.color == 'Black' and node.sibling().color == 'Black' and node.sibling().left.color == 'Black' and node.sibling().right.color == 'Black':
-    #print 'Case3'
-    node.sibling().color = 'Red'
-    deleteCase1(node.parent)
+  #print 'Case3', node,  node.sibling()
+  # Added conditiont to check if sibling is leaf
+  if node.parent.color == 'Black' and node.sibling().color == 'Black' and not node.sibling().isLeaf():
+    if node.sibling().left.color == 'Black' and node.sibling().right.color == 'Black':
+      node.sibling().color = 'Red'
+      deleteCase1(node.parent)
   deleteCase4(node)
 
 def deleteCase4(node):
   #print 'Case4', node.parent
   # This if keeps it from crashing; not sure if it should be there
-  if node.sibling().value != None:
+  if not node.sibling().isLeaf():
     if node.sibling().left.color == 'Black' and node.sibling().right.color == 'Black' and node.parent.color == 'Red':
       node.parent.color = 'Black'
       node.sibling().color = 'Red'
   deleteCase5(node)
 
 def deleteCase5(node):
-  #print 'Case5', node.sibling()
-  if node.sibling().color == 'Black':
+  #print 'Case5', node, node.sibling()
+  if node.sibling().color == 'Black' and not node.sibling().isLeaf():
     if node.sibling().side == 'Right' and node.sibling().left.color == 'Red' and node.sibling().right.color == 'Black':
       #print 'Right'
       node.sibling().color = 'Red'
@@ -320,7 +315,7 @@ def deleteCase5(node):
 def deleteCase6(node):
   #print 'Case6'
   # Must I check if the removed node is black?
-  if node.sibling().value != None:
+  if not node.sibling().isLeaf():
     if node.side == 'Left' and node.sibling().right.color == 'Red':
       #print 'Right'
       node.sibling().right.color = 'Black'
