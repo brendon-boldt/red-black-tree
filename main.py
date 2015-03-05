@@ -35,7 +35,7 @@ for i in range(0,20):
     quit()
 for i in range(0,20):
   x.delete(tree.node.Node.nodes[i].value)
-  if i > 3:
+  if False:
     x.tree()
   try:
     print x.root.left.length(), x.root.left.length(), i
@@ -44,6 +44,8 @@ for i in range(0,20):
     print e
     quit()
 
+x.delete(91)
 x.tree()
-searchCompare()
+quit()
+#searchCompare()
 

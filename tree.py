@@ -17,8 +17,18 @@ class Tree:
 
   def delete(self, value):
     node = self.root.delete(value)
+    if node == None:
+      raise Exception("Invalid deletion")
     if self.root.parent != None:
       self.root = self.root.parent
+      print self.root.color
+      if self.root.color != 'Black':
+        print self.root.color
+        self.tree()
+        raise Exception("Root colour error")
+      self.root.color = 'Black'
+    elif self.root.left.isLeaf() or self.root.right.isLeaf():
+      print "====="
     #print "Deleted Node:", node
     if node != None:
       del node

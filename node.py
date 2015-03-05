@@ -145,29 +145,27 @@ class Node:
     return self
 
   def singleChildDelete(self):
-    if self.value == 44:
-      print self, self.left, self.right
     if self.color == 'Black':
       if self.right.color == 'Red':
         self.right.color = 'Black'
         self.right.parent = self.parent
-        if self.side == 'Right':
-          self.parent.right = self.right
-          self.parent.right.side = 'Right'  
-        else:
-          self.parent.left = self.right
-          self.parent.left.side = 'Left'  
-        #return self
+        if self.parent != None:
+          if self.side == 'Right':
+            self.parent.right = self.right
+            self.parent.right.side = 'Right'  
+          else:
+            self.parent.left = self.right
+            self.parent.left.side = 'Left'  
       if self.left.color == 'Red':
         self.left.color = 'Black'
         self.left.parent = self.parent
-        if self.side == 'Right':
-          self.parent.right = self.left
-          self.parent.right.side = 'Right'  
-        else:
-          self.parent.left = self.left
-          self.parent.left.side = 'Left'  
-        print self, self.parent, self.parent.left, self.parent.right
+        if self.parent != None:
+          if self.side == 'Right':
+            self.parent.right = self.left
+            self.parent.right.side = 'Right'  
+          else:
+            self.parent.left = self.left
+            self.parent.left.side = 'Left'  
       return self
 
       if self.color == 'Black':
