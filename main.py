@@ -20,33 +20,30 @@ def childCompare():
 
 random.seed(1)
 
-x = tree.Tree(0)
-x.insert(1)
-x.insert(2)
-x.insert(3)
-x.insert(4)
-x.insert(5)
-x.insert(6)
-x.insert(7)
-x.insert(8)
-x.insert(9)
-x.insert(10)
-x.tree()
-print x.root.left.length(), x.root.right.length()
-quit()
-x.tree()
-x.delete(4)
-x.delete(7)
+x = tree.Tree(50)
 #childCompare()
-x.tree()
-print x.root.unbalanced()
 
-quit()
-
-for i in range(0,100):
+for i in range(0,20):
   x.insert(random.randint(0,100))
-x.tree()
-x.insert(random.randint(0,100))
+  if False:
+    x.tree()
+  try:
+    print x.root.left.length(), x.root.left.length(), i
+  except Exception, e:
+    x.tree()
+    print e
+    quit()
+for i in range(0,20):
+  x.delete(tree.node.Node.nodes[i].value)
+  if i > 3:
+    x.tree()
+  try:
+    print x.root.left.length(), x.root.left.length(), i
+  except Exception, e:
+    x.tree()
+    print e
+    quit()
+
 x.tree()
 searchCompare()
 

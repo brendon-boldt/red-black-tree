@@ -19,7 +19,7 @@ class Tree:
     node = self.root.delete(value)
     if self.root.parent != None:
       self.root = self.root.parent
-    print "Deleted Node:", node
+    #print "Deleted Node:", node
     if node != None:
       del node
 

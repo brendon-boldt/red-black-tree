@@ -5,7 +5,7 @@ class Node:
   left = None
   right = None
   parent = None
-  side = None
+  side = 'X'
 
   def __init__(self, value):
     self.value = value
@@ -42,15 +42,15 @@ class Node:
   def __str__(self):
     if self.isLeaf():
       return '-' + self.color[0]
-    return str(self.value) + self.color[0]
+    return str(self.value) + self.color[0] + self.side[0]
 
   def tree(self,level = 0):
     print '\t'*level, self
-    #if self.left.value != None:
-    if self.left != None:
+    if not self.left.isLeaf():
+    #if self.left != None:
       self.left.tree(level+1)
-    #if self.right.value != None:
-    if self.right != None:
+    if not self.right.isLeaf():
+    #if self.right != None:
       self.right.tree(level+1)
 
   # Accessing family members means that only the parent needs to be updated
@@ -111,11 +111,12 @@ class Node:
       if (self.left.isLeaf()) != (self.right.isLeaf()):
         return self.singleChildDelete()
       elif (self.left.isLeaf()) and (self.right.isLeaf()):
-        node = self.leafDelete()
+        node = self.terminalNodeDelete()
       else:
         node = self.left.findReplacement(self)
       #deleteCase1(self)
-      deleteCase1(node)
+      # To my knowledge, deleteCase1 needs a conditional call
+      #deleteCase1(node)
       return node
 
   # Finds node to replace node to be deleted from the rightmost of left subtree
@@ -124,13 +125,13 @@ class Node:
       print self, '->', node
       node.value = self.value
       if self.left.isLeaf():
-        return self.leafDelete()
+        return self.terminalNodeDelete()
       else:
         return self.singleChildDelete()
     else:
       return self.right.findReplacement(node)
     
-  def leafDelete(self):
+  def terminalNodeDelete(self):
     node = Node(None)
     node.color = 'Black'
     if self.side == 'Right':
@@ -139,26 +140,39 @@ class Node:
       self.parent.left = node
     del self.left
     del self.right
+    if self.color == 'Black':
+      deleteCase1(self)
     return self
 
   def singleChildDelete(self):
+    if self.value == 44:
+      print self, self.left, self.right
     if self.color == 'Black':
       if self.right.color == 'Red':
         self.right.color = 'Black'
         self.right.parent = self.parent
         if self.side == 'Right':
           self.parent.right = self.right
+          self.parent.right.side = 'Right'  
         else:
           self.parent.left = self.right
-        return self
+          self.parent.left.side = 'Left'  
+        #return self
       if self.left.color == 'Red':
         self.left.color = 'Black'
         self.left.parent = self.parent
         if self.side == 'Right':
           self.parent.right = self.left
+          self.parent.right.side = 'Right'  
         else:
           self.parent.left = self.left
-        return self
+          self.parent.left.side = 'Left'  
+        print self, self.parent, self.parent.left, self.parent.right
+      return self
+
+      if self.color == 'Black':
+        deleteCase1(self)
+      raise Exception("Invalid balancing")
     else:
       raise Exception("Invalid colouring")
 
@@ -169,16 +183,17 @@ class Node:
         count += 1
       leftLength  = self.left.length()
       rightLength = self.right.length()
+      if (self.color == 'Red' and self.left.color == 'Red') or (self.color == 'Red' and self.right.color == 'Red'):
+        raise Exception("Invalid colouring")
       if leftLength != rightLength:
+        print self
         raise Exception("Invalid balance")
       else:
         count += leftLength
     return count
  
   def unbalanced(self):
-    if self.left.isLeaf() and self.right.isLeaf():
-      return False
-    #if self.right.isLeaf() and self.left.color == 'Black' or self.left.isLeaf() and self.right.color == 'Black':
+    return self.right.length() != self.left.length()
     
   # Nota bene: the rotation call is made on the child of the pivot point
   # rather than the pivot point itself
@@ -212,7 +227,6 @@ class Node:
 # End Node class proper
 
 # Begin insert cases (see Wikipedia article on RBT's)
-# To my knowledge, all insert cases are implemented correctly
 def insertCase1(node):
   if node.parent == None:
     node.color = 'Black'
@@ -234,21 +248,35 @@ def insertCase3(node):
   else:
     insertCase4(node)
 
+'''
 def insertCase4(node):
     if self.parent != None:
       self.parent.right = self
     self.right, oldParent.left = oldParent, self.right
     self.side = 'Right'
+'''
 
 def insertCase4(node):
   if node.side != node.parent.side:
     if node.side == 'Right':
       node.rotateLeft()
+      insertCase5(node.left)
     else:
       node.rotateRight()
+      insertCase5(node.right)
   insertCase5(node)
 
 def insertCase5(node):
+  if node.side == node.parent.side and node.parent.color == 'Red' and node.uncle().color == 'Black':
+    if node.side == 'Left':
+      node.parent.color = 'Black'
+      node.grandparent().color = 'Red'
+      node.parent.rotateRight()
+    else:
+      node.parent.color = 'Black'
+      node.grandparent().color = 'Red'
+      node.parent.rotateLeft()
+'''
   if node.side == node.parent.side:
     if node.side == 'Left':
       node.parent.color = 'Black'
@@ -258,6 +286,7 @@ def insertCase5(node):
       node.parent.color = 'Black'
       node.grandparent().color = 'Red'
       node.parent.rotateLeft()
+'''
 
 def deleteCase1(node):
   if node.parent != None: 
