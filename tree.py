@@ -1,10 +1,10 @@
-import node
+import node as treeNode
 
 class Tree:
   root = None
 
   def __init__(self,value):
-    self.root = node.Node.initTree(value)
+    self.root = treeNode.Node.initTree(value)
 
   def insert(self,value):
     self.root.insert(value)
@@ -21,14 +21,17 @@ class Tree:
       raise Exception("Invalid deletion")
     if self.root.parent != None:
       self.root = self.root.parent
-      print self.root.color
       if self.root.color != 'Black':
-        print self.root.color
         self.tree()
         raise Exception("Root colour error")
       self.root.color = 'Black'
-    elif self.root.left.isLeaf() or self.root.right.isLeaf():
-      print "====="
+    elif node == self.root:
+      if self.root.left.isLeaf() and self.root.right.isLeaf():
+        self.root = treeNode.Node(None)
+      elif self.root.right.isLeaf():
+        self.root = self.root.left
+      elif self.root.left.isLeaf():
+        self.root = self.root.right
     #print "Deleted Node:", node
     if node != None:
       del node
